@@ -32,7 +32,13 @@
                                         <tr>
                                             <td>{{$coupon->id}}</td>
                                             <td>{{$coupon->code}}</td>
-                                            <td>{{$coupon->value}}</td>
+                                            <td>
+                                                @if($coupon->type =='fixed')
+                                                    {{$coupon->value}}$
+                                                @else
+                                                    {{$coupon->value}}%
+                                                @endif
+                                            </td>
                                             <td>{{$coupon->type}}</td>
                                             <td>{{$coupon->cart_value}}</td>
                                             <td>{{$coupon->expiry_date}}</td>

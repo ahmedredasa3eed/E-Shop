@@ -20,7 +20,7 @@ class SearchResultComponent extends Component
 
 
     public function addToCart($product_id,$product_name,$product_price){
-        Cart::add($product_id,$product_name,1,$product_price)->associate('App\Models\Product');
+        Cart::instance('cart')->add($product_id,$product_name,1,$product_price)->associate('App\Models\Product');
 
         return redirect()->route('frontend.cart');
     }

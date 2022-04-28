@@ -40,7 +40,7 @@
                                     <a class="btn btn-reduce" href="#" wire:click.prevent="decreaseQty('{{$row->rowId}}')"></a>
                                 </div>
                             </div>
-                            <div class="price-field sub-total"><p class="price">{{$row->subtotal}}</p></div>
+                            <div class="price-field sub-total"><p class="price">{{$row->subtotal()}}</p></div>
                             <div class="delete">
                                 <a href="#" wire:click.prevent="remove('{{$row->rowId}}')" class="btn btn-delete" title="">
                                     <span>Delete from your cart</span>
@@ -59,11 +59,11 @@
 
                         @if(session()->has('coupon'))
                         <p class="summary-info"><span class="title">Discount({{session()->get('coupon')['code']}})</span>
-                            <a class="btn" wire:click.prevent="forgetCoupon">Remove Coupon</a>
-                            <b class="index">${{$discount}}</b>
-                        <p class="summary-info"><span class="title">Tax After Discount({{config('cart.tax')}})</span><b class="index">${{$taxAfterDiscount}}</b></p>
-                        <p class="summary-info total-info "><span class="title">SubTotal After Discount</span><b class="index">${{$subTotalAfterDiscount}}</b></p>
-                        <p class="summary-info total-info "><span class="title">Total</span><b class="index">${{$totalAfterDiscount}}</b></p>
+                            <a class="btn" wire:click.prevent="forgetCoupon"><i class="fa fa-trash"></i></a>
+                            <b class="index">${{number_format($discount,2)}}</b>
+                        <p class="summary-info"><span class="title">Tax After Discount({{config('cart.tax')}})</span><b class="index">${{number_format($taxAfterDiscount,2)}}</b></p>
+                        <p class="summary-info total-info "><span class="title">SubTotal After Discount</span><b class="index">${{number_format($subTotalAfterDiscount,2)}}</b></p>
+                        <p class="summary-info total-info "><span class="title">Total</span><b class="index">${{number_format($totalAfterDiscount,2)}}</b></p>
                         @else
                             <p class="summary-info"><span class="title">Shipping</span><b class="index">Free Shipping</b>
                             <p class="summary-info"><span class="title">Tax</span><b class="index">$ {{Cart::tax()}}</b></p>
@@ -72,6 +72,7 @@
                     </div>
                     <div class="checkout-info">
                         @if(!session()->has('coupon'))
+
                             @if(session()->has('coupon_error'))
                                 <div class="alert alert-danger">{{session('coupon_error')}}</div>
                             @endif
@@ -86,8 +87,8 @@
                                 </form>
                             @endif
                         @endif
-                        <a class="btn btn-checkout" href="checkout.html">Check out</a>
-                        <a class="link-to-shop" href="shop.html">Continue Shopping<i class="fa fa-arrow-circle-right" aria-hidden="true"></i></a>
+                        <a class="btn btn-checkout" wire:click.prevent="goToCheckoutPage" href="javascript:void(0);">Check out</a>
+                        <a class="link-to-shop" href="{{route('frontend.shop')}}">Continue Shopping<i class="fa fa-arrow-circle-right" aria-hidden="true"></i></a>
                     </div>
                     <div class="update-clear">
                         <a class="btn btn-clear" href="#" wire:click.prevent="destroyCart()">Clear Shopping Cart</a>

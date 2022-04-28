@@ -59,14 +59,16 @@ class Cart extends Component
     }
 
     public function calculateDiscount(){
-        if(session()->has('coupon')['type'] == 'fixed'){
-            $this->discount = session()->get('coupon')['value'];
-        }else{
-            $this->discount = (Carts::instance('cart')->subtotal() * session()->get('coupon')['value']) /100;
+        if(session()->has('coupon')){
+            if(session()->get('coupon')['type'] == 'fixed'){
+                $this->discount = session()->get('coupon')['value'];
+            }else{
+                $this->discount = (Carts::instance('cart')->subtotal() * session()->get('coupon')['value']) /100;
+            }
+            $this->subTotalAfterDiscount = Carts::instance('cart')->subtotal() - $this->discount;
+            $this->taxAfterDiscount = ($this->subTotalAfterDiscount * config('cart.tax')) / 100;
+            $this->totalAfterDiscount = $this->subTotalAfterDiscount + $this->taxAfterDiscount;
         }
-        $this->subTotalAfterDiscount = Carts::instance('cart')->subtotal() - $this->discount;
-        $this->taxAfterDiscount = ($this->subTotalAfterDiscount * config('cart.tax')) / 100;
-        $this->totalAfterDiscount = $this->subTotalAfterDiscount + $this->taxAfterDiscount;
     }
 
     public function forgetCoupon(){
@@ -75,6 +77,32 @@ class Cart extends Component
         }
     }
 
+    public function setAmountForCheckout(){
+        if(!Carts::instance('cart')->content()->count() > 0){
+            session()->forget('checkout');
+        }
+
+        if(session()->has('coupon')){
+            session()->put('checkout',[
+                'discount' => $this->discount,
+                'subTotal' => $this->subTotalAfterDiscount,
+                'tax' => $this->taxAfterDiscount,
+                'total' => $this->totalAfterDiscount,
+            ]);
+        }else{
+            session()->put('checkout',[
+                'discount' => 0,
+                'subTotal' => Carts::instance('cart')->subtotal(),
+                'tax' => Carts::instance('cart')->tax(),
+                'total' => Carts::instance('cart')->total(),
+            ]);
+        }
+    }
+
+    public function goToCheckoutPage(){
+        if(Carts::instance('cart')->content()->count() > 0 )
+        return redirect()->route('frontend.checkout');
+    }
     public function render()
     {
         //check that subtotal is greater than cart value;
@@ -85,6 +113,10 @@ class Cart extends Component
                 $this->calculateDiscount();
             }
         }
+
+        // call function here
+        $this->setAmountForCheckout();
+
         return view('livewire.cart');
     }
 }

@@ -195,10 +195,11 @@
                             <li class="menu-item">
                                 <a href="{{route('frontend.cart')}}" class="link-term mercado-item-title">Cart</a>
                             </li>
+                            @if(auth()->check() && auth()->user()->user_type == 'user')
                             <li class="menu-item">
-                                <a href="{{route('frontend.checkout')}}"
-                                   class="link-term mercado-item-title">Checkout</a>
+                                <a href="{{route('frontend.orders')}}" class="link-term mercado-item-title">My Orders</a>
                             </li>
+                            @endif
                             <li class="menu-item">
                                 <a href="contact-us.html" class="link-term mercado-item-title">Contact Us</a>
                             </li>
